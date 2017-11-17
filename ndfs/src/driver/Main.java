@@ -89,13 +89,13 @@ public class Main {
      *            the arguments.
      */
     public static void main(String[] argv) {
+
         try {
             if (argv.length != 3)
                 throw new IllegalArgumentException("Wrong number of arguments");
             File file = new File(argv[0]);
             String version = argv[1];
             int nrWorkers = new Integer(argv[2]);
-
             dispatch(file, version, nrWorkers);
         } catch (FileNotFoundException e) {
             System.err.println(e.getMessage());
