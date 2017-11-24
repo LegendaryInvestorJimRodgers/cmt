@@ -3,7 +3,7 @@ package ndfs.mcndfs_1_naive;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.Thread;
-import java.lang.Condition
+//import java.lang.Condition;
 import ndfs.NDFS;
 
 /**
@@ -11,10 +11,10 @@ import ndfs.NDFS;
  * worker class.
  */
 
-public class MonitorObject{
+class MonitorObject{
 }
 
-public class ThreadInfo{
+class ThreadInfo{
 	public File pFile;
 	public int nWorker;
 	public boolean terminationResult;
@@ -39,7 +39,7 @@ public class NNDFS implements NDFS {
      *             is thrown in case the file could not be read.
      */
     public NNDFS(File promelaFile, int nrWorker) throws FileNotFoundException {
-	threadInfo.pFile = primelaFile;
+	threadInfo.pFile = promelaFile;
 	threadInfo.nWorker = nrWorker;
 	threadInfo.terminationResult = false;
 	termination = new MonitorObject();

@@ -3,13 +3,13 @@ import java.lang.Thread;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.concurrent.*;
-import java.lang.Condition;
+//import java.lang.Condition;
 
 import graph.Graph;
 import graph.GraphFactory;
 import graph.State;
-import NNDFS.MonitorObject;
-import NNDFS.ThreadInfo;
+//import NNDFS.MonitorObject;
+//import NNDFS.ThreadInfo;
 
 /**
  * This is a straightforward implementation of Figure 1 of
@@ -30,15 +30,14 @@ public class Worker extends Thread {
     /**
      * Constructs a Worker object using the specified Promela file.
      *
-     * @param promelaFile
      *            the Promela file.
      * @throws FileNotFoundException
      *             is thrown in case the file could not be read.
      */
     //public Worker(File promelaFile, int nrWorker, boolean[] tterminationState, Condition ttermination) throws FileNotFoundException {
     public Worker(ThreadInfo threaddInfo) throws FileNotFoundException {
-	this.threadInfo = threaddInfo;
-        this.graph = GraphFactory.createGraph(threadInfo.promelaFile);
+	    this.threadInfo = threaddInfo;
+        this.graph = GraphFactory.createGraph(threaddInfo.pFile);
     }
 
     private void dfsRed(State s) throws CycleFoundException {
