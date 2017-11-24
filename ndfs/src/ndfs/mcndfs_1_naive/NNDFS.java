@@ -42,13 +42,13 @@ public class NNDFS implements NDFS {
 	threadInfo.pFile = promelaFile;
 	threadInfo.nWorker = nrWorker;
 	threadInfo.terminationResult = false;
-	termination = new MonitorObject();
-	sense = new boolean[nrWorker]; // TODO: initialize these
-	finishedCount = 0;
+	threadInfo.termination = new MonitorObject();
+	threadInfo.sense = new boolean[nrWorker]; // TODO: initialize these
+	threadInfo.finishedCount = 0;
 
-        threads = new Thread[nrWorker];
+        workers = new Thread[nrWorker];
         for(int i=0; i<nrWorker; i++){
-            this.workers[i] = new Worker(threadInfo);
+            workers[i] = new Worker(threadInfo);
         }
 
         //this.worker = new Worker(promelaFile);
