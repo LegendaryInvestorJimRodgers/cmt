@@ -2,10 +2,14 @@ package ndfs.mcndfs_1_naive;
 import java.lang.Thread;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.concurrent.*;
+import java.lang.Condition;
 
 import graph.Graph;
 import graph.GraphFactory;
 import graph.State;
+import NNDFS.MonitorObject;
+import NNDFS.ThreadInfo;
 
 /**
  * This is a straightforward implementation of Figure 1 of
@@ -16,7 +20,7 @@ public class Worker extends Thread {
 
     private final Graph graph;
     private final Colors colors = new Colors();
-    private boolean result = false;
+    public ThreadInfo threadInfo;
 
     // Throwing an exception is a convenient way to cut off the search in case a
     // cycle is found.
@@ -31,17 +35,25 @@ public class Worker extends Thread {
      * @throws FileNotFoundException
      *             is thrown in case the file could not be read.
      */
-    public Worker(File promelaFile) throws FileNotFoundException {
-
-        this.graph = GraphFactory.createGraph(promelaFile);
+    //public Worker(File promelaFile, int nrWorker, boolean[] tterminationState, Condition ttermination) throws FileNotFoundException {
+    public Worker(ThreadInfo threaddInfo) throws FileNotFoundException {
+	this.threadInfo = threaddInfo;
+        this.graph = GraphFactory.createGraph(threadInfo.promelaFile);
     }
 
     private void dfsRed(State s) throws CycleFoundException {
-
+	if(Thread.interrupted()){
+		throw new InterruptedException();
+	}
         for (State t : graph.post(s)) {
             if (colors.hasColor(t, Color.CYAN)) {
-                // TODO signal other threads to terminate
-                throw new CycleFoundException();
+                // signal main thread of cycle found
+		threadInfo.terminationResult = true;
+		synchronized(threadInfo.termination){
+			threadInfo.termination.notify();
+		}
+		return;
+                
             } else if (colors.hasColor(t, Color.BLUE)) {
                 colors.color(t, Color.RED);
                 dfsRed(t);
@@ -50,7 +62,9 @@ public class Worker extends Thread {
     }
 
     private void dfsBlue(State s) throws CycleFoundException {
-
+	if(Thread.interrupted()){
+		throw new InterruptedException();
+	}
         colors.color(s, Color.CYAN);
         for (State t : graph.post(s)) {
             if (colors.hasColor(t, Color.WHITE)) {
@@ -67,17 +81,21 @@ public class Worker extends Thread {
 
     private void nndfs(State s) throws CycleFoundException {
         dfsBlue(s);
+	
+	//signal main thread that last worker has finished
+	if(getAndIncrement(threadInfo.finishedCount) == threadInfo.nWorker -1){
+		threadInfo.terminationResult = false;
+		synchronized(threadInfo.termination){
+			threadInfo.termination.notify();
+		}
+	}
     }
     @Override
     public void run() {
-        try {
-            nndfs(graph.getInitialState());
-        } catch (CycleFoundException e) {
-            result = true;
-        }
+        nndfs(graph.getInitialState());
     }
 
-    public boolean getResult() {
+    /*OLDCODE:public boolean getResult() {
         return result;
-    }
+    }*/
 }
