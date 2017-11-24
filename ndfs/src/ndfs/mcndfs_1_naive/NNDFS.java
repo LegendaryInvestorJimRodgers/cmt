@@ -58,12 +58,12 @@ public class NNDFS implements NDFS {
     public boolean ndfs() {
         for(int i = 0; i < nrWorker; i++){
 	    // TODO put barrier inside threads to avoid cycles being found
-	    // before await() is called here
+	    // before wait() is called here
             workers[i].start();
         }
 
 	synchronized(termination){
-		termination.await();
+		termination.wait();
 	}
 	if(threadInfo.terminationResult){
 	    //TODO terminate children
