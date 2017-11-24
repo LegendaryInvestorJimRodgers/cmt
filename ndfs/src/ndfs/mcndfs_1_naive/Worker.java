@@ -144,7 +144,7 @@ public class Worker extends Thread {
     }*/
 }
 
-private class StateInfo{
+class StateInfo{
 	boolean red;
 	int redCount;
 
